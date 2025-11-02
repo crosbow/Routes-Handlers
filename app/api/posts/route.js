@@ -1,4 +1,5 @@
 import { posts } from "@/app/data";
+import { headers } from "next/headers";
 
 export const GET = (request) => {
   const searchParams = request.nextUrl.searchParams;
@@ -16,8 +17,26 @@ export const GET = (request) => {
   return Response.json(posts);
 };
 
+// Secured Route
+const TOKEN = "SUUU";
 export const POST = async (request) => {
   const { title } = await request.json();
+
+  const requestHeader = headers();
+
+  const token = requestHeader.get("Authorization")?.replace("Bearer", "");
+
+  if (token !== TOKEN) {
+    return new Response(
+      JSON.stringify({
+        success: false,
+        message: "Invalid auth token",
+      }),
+      {
+        status: 400,
+      }
+    );
+  }
 
   if (!title) {
     return new Response(
