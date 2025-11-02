@@ -1,5 +1,5 @@
 import { posts } from "@/app/data";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 export const GET = (request) => {
   const searchParams = request.nextUrl.searchParams;
@@ -24,7 +24,11 @@ export const POST = async (request) => {
 
   const requestHeader = headers();
 
-  const token = requestHeader.get("Authorization")?.replace("Bearer", "");
+  const token =
+    requestHeader.get("Authorization")?.replace("Bearer", "") ||
+    cookies().get("token").value;
+
+  // console.log(cookies().get("token"));
 
   if (token !== TOKEN) {
     return new Response(
@@ -56,6 +60,8 @@ export const POST = async (request) => {
   };
 
   posts.push(newPost);
+
+  cookies().set("token", TOKEN);
 
   return new Response(
     JSON.stringify({
