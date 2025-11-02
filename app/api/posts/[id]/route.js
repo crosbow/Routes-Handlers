@@ -1,4 +1,5 @@
 import { posts } from "@/app/data";
+import { redirect } from "next/navigation";
 
 export const GET = async (_request, { params }) => {
   const postId = Number(params.id);
@@ -6,15 +7,7 @@ export const GET = async (_request, { params }) => {
   const post = posts.find((post) => post.id === postId);
 
   if (!post) {
-    return new Response(
-      JSON.stringify({
-        success: false,
-        message: "Post not found",
-      }),
-      {
-        status: 404,
-      }
-    );
+    redirect("/api/posts");
   }
 
   return Response.json(post);
